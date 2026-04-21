@@ -206,7 +206,7 @@ async function loadData(){
 
 function renderAll(){
   const search = function openLightbox(src){
-  document.getElementById('lightbox-img').src=src.replace('sz=w800','sz=w1600');
+  document.getElementById('lightbox-img').src=src.replace('w800','w1600');
   document.getElementById('lightbox').classList.add('open');
 }
 function closeLightbox(){
@@ -259,7 +259,7 @@ document.getElementById('search').value.toLowerCase();
         </div>
       </div>
       <div class="detail-panel${activeId===p.id?' open':''}">
-        ${p.image ? `<img class="project-img" src="${p.image}" alt="${p.address}" loading="lazy" onerror="this.style.display='none'" onclick="event.stopPropagation();openLightbox('${p.image}')"/>` : ''}
+        ${p.image ? `<img class="project-img" src="${p.image}" alt="${p.address}" loading="lazy" onerror="this.style.display='none'" onclick="event.stopPropagation();openLightbox(this.src)"/>` : ''}
         <h3>${p.address||'—'}</h3>
         <p>${p.description||'No description provided.'}</p>
         <div class="detail-grid">
