@@ -234,7 +234,7 @@ function renderAll(){
         <div class="detail-grid">
           <div class="detail-item"><label>Est. Completion</label><span>${p.est_completion||'—'}</span></div>
           <div class="detail-item"><label>Project Type</label><span>${p.type||'—'}</span></div>
-          <div class="detail-item"><label>May Be Listed?</label><span>${p.may_be_listed||'—'}</span></div>
+
         </div>
         ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Project Record']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}
       </div>
