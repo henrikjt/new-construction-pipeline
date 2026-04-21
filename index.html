@@ -12,6 +12,13 @@
   header{background:#1a2b4a;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
   header h1{font-size:17px;font-weight:500;letter-spacing:0.01em}
   header span{font-size:12px;opacity:0.6}
+  .agent-info{text-align:right;line-height:1.4}
+  @media(max-width:640px){
+    header{flex-direction:column;align-items:center;text-align:center;padding:12px 16px;gap:6px}
+    header h1{font-size:15px}
+    .agent-info{text-align:center}
+    .agent-info div{display:inline}
+  }
   .toolbar{background:#fff;border-bottom:1px solid #e5e5e3;padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .toolbar input[type=text]{flex:1;min-width:160px;padding:6px 10px;border:1px solid #d0d0cc;border-radius:6px;font-size:13px;outline:none}
   .toolbar input:focus{border-color:#1a2b4a}
@@ -76,7 +83,7 @@
     <h1>SF Peninsula New Construction Pipeline</h1>
     <span>Independent summary of public planning records</span>
   </div>
-  <div style="text-align:right;line-height:1.4">
+  <div class="agent-info">
     <div style="font-size:14px;font-weight:500">Ed Stephens</div>
     <div style="font-size:12px;opacity:0.7">Coldwell Banker Realty &nbsp;|&nbsp; <a href="tel:6502081301" style="color:rgba(255,255,255,0.7);text-decoration:none;pointer-events:auto;cursor:pointer">650-208-1301</a> &nbsp;|&nbsp; <a href="mailto:edstephensrealestate@gmail.com" style="color:rgba(255,255,255,0.7);text-decoration:none;pointer-events:auto;cursor:pointer">edstephensrealestate@gmail.com</a></div>
   </div>
