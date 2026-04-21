@@ -3,23 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>New Development Pipeline</title>
+<title>SF Peninsula New Construction Pipeline</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-
-function loadPasted(){
-  const text = document.getElementById('csv-paste').value.trim();
-  const status = document.getElementById('sheet-status');
-  if(!text){status.textContent='Nothing pasted.';return;}
-  const data = parseCSV(text);
-  if(!data.length){status.textContent='No valid rows found. Check headers & coordinates.';status.style.color='#856404';return;}
-  allProjects=data;renderAll();
-  status.textContent=`Loaded ${data.length} project${data.length!==1?'s':''}`;
-  status.style.color='#065f46';
-  document.getElementById('load-tips').style.display='none';
-}
   body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh}
   header{background:#1a2b4a;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
   header h1{font-size:17px;font-weight:500;letter-spacing:0.01em}
@@ -62,16 +50,16 @@ function loadPasted(){
   .legend-item{display:flex;align-items:center;gap:5px}
   .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
   .no-results{padding:24px;text-align:center;color:#888;font-size:13px}
-  .setup-banner{background:#e8f0fe;border:1px solid #b3c9f5;border-radius:8px;margin:10px;padding:12px 14px;font-size:12px;color:#1a56a4;line-height:1.6}
-  .setup-banner a{color:#1a56a4;font-weight:500}
   .count-badge{background:#1a2b4a;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:6px}
+  .loading{padding:24px;text-align:center;color:#888;font-size:13px}
+  .error-msg{margin:10px;padding:12px;background:#fff3cd;border:1px solid #f5c842;border-radius:8px;font-size:12px;color:#856404;line-height:1.6}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>New Development Pipeline</h1>
-  <span id="agent-name">Your Real Estate Agency</span>
+  <h1>SF Peninsula New Construction Pipeline</h1>
+  <span>Powered by Google Sheets</span>
 </header>
 
 <div class="toolbar">
@@ -99,22 +87,10 @@ function loadPasted(){
     <div class="sidebar-header">
       Projects <span class="count-badge" id="result-count">0</span>
     </div>
-    <div class="setup-banner">
-      <strong>Connect your Google Sheet</strong><br>
-      Enter your published Sheet CSV URL below to load live data.
-      <br><br>
-      <input type="text" id="sheet-url" placeholder="Paste Google Sheet CSV URL here..." style="width:100%;margin-top:4px;padding:5px 8px;border:1px solid #b3c9f5;border-radius:4px;font-size:12px;color:#1a1a1a"/>
-      <button onclick="loadSheet()" style="margin-top:6px;padding:5px 12px;background:#1a2b4a;color:#fff;border:none;border-radius:4px;font-size:12px;cursor:pointer">Load</button>
-      &nbsp;<span id="sheet-status" style="font-size:11px"></span>
-      <div id="load-tips" style="display:none;margin-top:8px;font-size:11px;color:#856404;line-height:1.7">
-        <strong>Or paste CSV text directly:</strong><br>
-        <textarea id="csv-paste" rows="4" placeholder="Open your CSV in a text editor, copy all the text, and paste it here..." style="width:100%;margin-top:4px;padding:5px;border:1px solid #b3c9f5;border-radius:4px;font-size:11px;color:#1a1a1a;resize:vertical"></textarea>
-        <button onclick="loadPasted()" style="margin-top:4px;padding:5px 12px;background:#1a2b4a;color:#fff;border:none;border-radius:4px;font-size:12px;cursor:pointer">Load pasted CSV</button>
-      </div>
-    </div>
-    <div id="cards-container"></div>
+    <div id="cards-container"><div class="loading">Loading projects...</div></div>
   </div>
 </div>
+
 
 <div class="legend">
   <div class="legend-item"><span class="dot" style="background:#3b82f6"></span>Permit Filed</div>
@@ -125,41 +101,37 @@ function loadPasted(){
 </div>
 
 <script>
-const SAMPLE_DATA = [
-  {id:1,address:"1420 Floribunda Ave",neighborhood:"Burlingame",city:"Burlingame",status:"Permit Filed",type:"Single-Family",developer:"Peninsula Homes LLC",description:"New single-family home on a corner lot. Permit application submitted to city planning.",est_completion:"Q4 2027",may_be_listed:"Yes",lat:37.5795,lng:-122.3616},
-  {id:2,address:"215 Anita Rd",neighborhood:"Burlingame Hills",city:"Burlingame",status:"Approved",type:"Single-Family",developer:"Coastal Builders Inc",description:"Custom 4-bed home approved for construction on a hillside lot with Bay views.",est_completion:"Q2 2027",may_be_listed:"Yes",lat:37.5648,lng:-122.3751},
-  {id:3,address:"880 Mahler Rd",neighborhood:"Millbrae",city:"Millbrae",status:"Under Review",type:"Multi-Unit",developer:"Bay Area Urban Dev",description:"18-unit residential building currently under planning commission review. Transit-oriented.",est_completion:"Q1 2028",may_be_listed:"Unknown",lat:37.5998,lng:-122.3869},
-  {id:4,address:"1100 El Camino Real",neighborhood:"San Mateo",city:"San Mateo",status:"Construction Started",type:"Condo",developer:"ECR Properties Group",description:"32-unit mixed-use condo development along El Camino Real. Ground floor retail planned.",est_completion:"Q3 2026",may_be_listed:"Yes",lat:37.5556,lng:-122.3132},
-  {id:5,address:"742 Laurel Ave",neighborhood:"San Carlos",city:"San Carlos",status:"May Be Listed",type:"Single-Family",developer:"Private Owner",description:"Brand new custom build nearing completion. Owner is considering listing in late 2026.",est_completion:"Q2 2026",may_be_listed:"Yes",lat:37.5070,lng:-122.2605},
-  {id:6,address:"305 Hillsdale Blvd",neighborhood:"Foster City",city:"Foster City",status:"Permit Filed",type:"Townhouse",developer:"Lagoon View Homes",description:"6-unit townhouse cluster near Hillsdale Mall. Early permitting stage.",est_completion:"Q2 2028",may_be_listed:"Unknown",lat:37.5585,lng:-122.2711},
-  {id:7,address:"1850 Broadway",neighborhood:"Redwood City",city:"Redwood City",status:"Approved",type:"Multi-Unit",developer:"RWC Development Co",description:"24-unit apartment building approved near downtown Redwood City. Walkable location.",est_completion:"Q4 2027",may_be_listed:"No",lat:37.4852,lng:-122.2364},
-];
+// ============================================================
+// CONFIGURATION — update these two values
+// ============================================================
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_IkoOesMqd_-ELyEyxxk_3DJbHyKggDUSmnGVw3-zjCPUNzUCum00ZjykjfIXJulDT5nlTrdHTKPl/pub?gid=0&single=true&output=csv';
+const CONTACT_EMAIL = 'your@email.com'; // agent contact email
+// ============================================================
 
 const STATUS_COLORS = {
-  "Permit Filed":"#3b82f6",
-  "Under Review":"#f59e0b",
-  "Approved":"#10b981",
-  "Construction Started":"#ec4899",
-  "May Be Listed":"#8b5cf6"
+  'Permit Filed':'#3b82f6',
+  'Under Review':'#f59e0b',
+  'Approved':'#10b981',
+  'Construction Started':'#ec4899',
+  'May Be Listed':'#8b5cf6'
 };
-
 const BADGE_CLASSES = {
-  "Permit Filed":"badge-permit",
-  "Under Review":"badge-review",
-  "Approved":"badge-approved",
-  "Construction Started":"badge-construction",
-  "May Be Listed":"badge-listed"
+  'Permit Filed':'badge-permit',
+  'Under Review':'badge-review',
+  'Approved':'badge-approved',
+  'Construction Started':'badge-construction',
+  'May Be Listed':'badge-listed'
 };
 
-let allProjects = [...SAMPLE_DATA];
+let allProjects = [];
 let markers = {};
 let activeId = null;
 let map;
 
 function initMap(){
-  map = L.map('map').setView([37.5741, -122.3588], 11); // Burlingame
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-    attribution:'© OpenStreetMap contributors © CARTO',maxZoom:19
+  map = L.map('map').setView([37.5741, -122.3588], 12); // Burlingame
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap contributors', maxZoom:19
   }).addTo(map);
 }
 
@@ -167,75 +139,8 @@ function makeIcon(color){
   return L.divIcon({
     className:'',
     html:`<div style="width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>`,
-    iconSize:[14,14],iconAnchor:[7,7]
+    iconSize:[14,14], iconAnchor:[7,7]
   });
-}
-
-function renderAll(){
-  const search = document.getElementById('search').value.toLowerCase();
-  const filterStatus = document.getElementById('filter-status').value;
-  const filterType = document.getElementById('filter-type').value;
-
-  const filtered = allProjects.filter(p=>{
-    const matchSearch = !search || p.address.toLowerCase().includes(search) || p.neighborhood.toLowerCase().includes(search) || p.city.toLowerCase().includes(search);
-    const matchStatus = !filterStatus || p.status === filterStatus;
-    const matchType = !filterType || p.type === filterType;
-    return matchSearch && matchStatus && matchType;
-  });
-
-  Object.values(markers).forEach(m=>map.removeLayer(m));
-  markers = {};
-
-  filtered.forEach(p=>{
-    const m = L.marker([p.lat,p.lng],{icon:makeIcon(STATUS_COLORS[p.status]||'#888')}).addTo(map);
-    m.bindTooltip(`<strong>${p.address}</strong><br>${p.status}`,{direction:'top',offset:[0,-6]});
-    m.on('click',()=>selectProject(p.id));
-    markers[p.id] = m;
-  });
-
-  const container = document.getElementById('cards-container');
-  document.getElementById('result-count').textContent = filtered.length;
-  if(!filtered.length){
-    container.innerHTML='<div class="no-results">No projects match your filters.</div>';
-    return;
-  }
-  container.innerHTML = filtered.map(p=>`
-    <div class="card${activeId===p.id?' active':''}" id="card-${p.id}" onclick="selectProject(${p.id})">
-      <div class="card-body">
-        <div class="card-address">${p.address}</div>
-        <div class="card-sub">${p.neighborhood}, ${p.city}</div>
-        <div class="card-row">
-          <span class="badge ${BADGE_CLASSES[p.status]||''}">${p.status}</span>
-          <span class="type-tag">${p.type}</span>
-        </div>
-      </div>
-      <div class="detail-panel${activeId===p.id?' open':''}">
-        <h3>${p.address}</h3>
-        <p>${p.description}</p>
-        <div class="detail-grid">
-          <div class="detail-item"><label>Developer</label><span>${p.developer}</span></div>
-          <div class="detail-item"><label>Est. Completion</label><span>${p.est_completion}</span></div>
-          <div class="detail-item"><label>Project Type</label><span>${p.type}</span></div>
-          <div class="detail-item"><label>May Be Listed?</label><span>${p.may_be_listed}</span></div>
-        </div>
-        ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Project Record']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}
-        <button class="contact-btn" onclick="event.stopPropagation();alert('Contact agent feature — connect your CRM or email.')">Contact Agent</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function selectProject(id){
-  activeId = activeId===id ? null : id;
-  renderAll();
-  if(activeId && markers[activeId]){
-    const p = allProjects.find(x=>x.id===id);
-    map.setView([p.lat,p.lng],14,{animate:true});
-    setTimeout(()=>{
-      const el = document.getElementById(`card-${id}`);
-      if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
-    },100);
-  }
 }
 
 function parseCSV(text){
@@ -243,7 +148,11 @@ function parseCSV(text){
   const headers = rows[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase().replace(/ /g,'_'));
   return rows.slice(1).map((row,i)=>{
     const vals=[];let cur='',inQ=false;
-    for(let c of row){if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){vals.push(cur);cur=''}else{cur+=c}}
+    for(let c of row){
+      if(c==='"'){inQ=!inQ}
+      else if(c===','&&!inQ){vals.push(cur);cur=''}
+      else{cur+=c}
+    }
     vals.push(cur);
     const obj={id:i+1};
     headers.forEach((h,idx)=>obj[h]=(vals[idx]||'').trim());
@@ -253,45 +162,96 @@ function parseCSV(text){
   }).filter(p=>!isNaN(p.lat)&&!isNaN(p.lng));
 }
 
-async function tryFetch(url){
-  const proxies=[
-    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://thingproxy.freeboard.io/fetch/${url}`,
-    url
-  ];
-  for(let p of proxies){
-    try{
-      const r=await fetch(p,{cache:'no-cache'});
-      if(r.ok){const t=await r.text();if(t.includes(','))return t;}
-    }catch(e){}
+async function loadData(){
+  try{
+    const res = await fetch(SHEET_CSV_URL);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    allProjects = parseCSV(text);
+    if(!allProjects.length) throw new Error('No valid rows found');
+    renderAll();
+  }catch(e){
+    document.getElementById('cards-container').innerHTML=`
+      <div class="error-msg">
+        <strong>Could not load data.</strong><br>
+        Make sure your Google Sheet is published via<br>
+        <em>File → Share → Publish to web → CSV</em><br><br>
+        Error: ${e.message}
+      </div>`;
+    document.getElementById('result-count').textContent='0';
   }
-  return null;
 }
 
-async function loadSheet(){
-  const url = document.getElementById('sheet-url').value.trim();
-  const status = document.getElementById('sheet-status');
-  if(!url){status.textContent='Please enter a URL.';return;}
-  status.textContent='Trying to connect...';status.style.color='#1a56a4';
-  const text = await tryFetch(url);
-  if(!text){
-    status.textContent='Could not load sheet. See tips below.';
-    status.style.color='#991b1b';
-    document.getElementById('load-tips').style.display='block';
+function renderAll(){
+  const search = document.getElementById('search').value.toLowerCase();
+  const filterStatus = document.getElementById('filter-status').value;
+  const filterType = document.getElementById('filter-type').value;
+
+  const filtered = allProjects.filter(p=>{
+    const matchSearch = !search ||
+      (p.address||'').toLowerCase().includes(search) ||
+      (p.neighborhood||'').toLowerCase().includes(search) ||
+      (p.city||'').toLowerCase().includes(search);
+    const matchStatus = !filterStatus || p.status===filterStatus;
+    const matchType = !filterType || p.type===filterType;
+    return matchSearch && matchStatus && matchType;
+  });
+
+  Object.values(markers).forEach(m=>map.removeLayer(m));
+  markers={};
+
+  filtered.forEach(p=>{
+    const color = STATUS_COLORS[p.status]||'#888';
+    const m = L.marker([p.lat,p.lng],{icon:makeIcon(color)}).addTo(map);
+    m.bindTooltip(`<strong>${p.address}</strong><br>${p.status}`,{direction:'top',offset:[0,-6]});
+    m.on('click',()=>selectProject(p.id));
+    markers[p.id]=m;
+  });
+
+  document.getElementById('result-count').textContent=filtered.length;
+  const container=document.getElementById('cards-container');
+
+  if(!filtered.length){
+    container.innerHTML='<div class="no-results">No projects match your filters.</div>';
     return;
   }
-  const data=parseCSV(text);
-  if(!data.length){
-    status.textContent='Sheet loaded but no valid rows found. Check headers & coordinates.';
-    status.style.color='#856404';
-    document.getElementById('load-tips').style.display='block';
-    return;
+
+  container.innerHTML=filtered.map(p=>`
+    <div class="card${activeId===p.id?' active':''}" id="card-${p.id}" onclick="selectProject(${p.id})">
+      <div class="card-body">
+        <div class="card-address">${p.address||'—'}</div>
+        <div class="card-sub">${[p.neighborhood,p.city].filter(Boolean).join(', ')}</div>
+        <div class="card-row">
+          <span class="badge ${BADGE_CLASSES[p.status]||''}">${p.status||'Unknown'}</span>
+          <span class="type-tag">${p.type||'—'}</span>
+        </div>
+      </div>
+      <div class="detail-panel${activeId===p.id?' open':''}">
+        <h3>${p.address||'—'}</h3>
+        <p>${p.description||'No description provided.'}</p>
+        <div class="detail-grid">
+          <div class="detail-item"><label>Est. Completion</label><span>${p.est_completion||'—'}</span></div>
+          <div class="detail-item"><label>Project Type</label><span>${p.type||'—'}</span></div>
+          <div class="detail-item"><label>May Be Listed?</label><span>${p.may_be_listed||'—'}</span></div>
+        </div>
+        ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Project Record']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}
+        <a class="contact-btn" href="mailto:${CONTACT_EMAIL}?subject=Inquiry: ${encodeURIComponent(p.address||'New Project')}">Contact Agent</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectProject(id){
+  activeId = activeId===id ? null : id;
+  renderAll();
+  if(activeId && markers[activeId]){
+    const p=allProjects.find(x=>x.id===id);
+    map.setView([p.lat,p.lng],15,{animate:true});
+    setTimeout(()=>{
+      const el=document.getElementById(`card-${id}`);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },100);
   }
-  allProjects=data;renderAll();
-  status.textContent=`Loaded ${data.length} project${data.length!==1?'s':''}`;
-  status.style.color='#065f46';
-  document.getElementById('load-tips').style.display='none';
 }
 
 document.getElementById('search').addEventListener('input',renderAll);
@@ -299,7 +259,7 @@ document.getElementById('filter-status').addEventListener('change',renderAll);
 document.getElementById('filter-type').addEventListener('change',renderAll);
 
 initMap();
-renderAll();
+loadData();
 </script>
 </body>
 </html>
