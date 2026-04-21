@@ -289,10 +289,22 @@ function selectProject(id){
   if(activeId && markers[activeId]){
     const p=allProjects.find(x=>x.id===id);
     map.setView([p.lat,p.lng],15,{animate:true});
-    setTimeout(()=>{
-      const el=document.getElementById(`card-${id}`);
-      if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
-    },100);
+    const isMobile = window.innerWidth <= 640;
+    if(isMobile){
+      const mapH = document.getElementById('map').offsetHeight;
+      const el = document.getElementById(`card-${id}`);
+      if(el){
+        setTimeout(()=>{
+          const top = el.getBoundingClientRect().top + window.scrollY - mapH;
+          window.scrollTo({top, behavior:'smooth'});
+        },100);
+      }
+    } else {
+      setTimeout(()=>{
+        const el=document.getElementById(`card-${id}`);
+        if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+      },100);
+    }
   }
 }
 
