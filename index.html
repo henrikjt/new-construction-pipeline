@@ -42,6 +42,8 @@
   .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-bottom:10px}
   .detail-item label{font-size:11px;color:#888;display:block}
   .detail-item span{font-size:13px;color:#1a1a1a;font-weight:500}
+  .doc-btn{display:inline-block;margin:0 6px 6px 0;padding:6px 12px;background:#f0f4ff;color:#1a2b4a;border:1px solid #c5d0e8;border-radius:6px;font-size:12px;text-decoration:none}
+  .doc-btn:hover{background:#e0e8ff}
   .contact-btn{display:block;width:100%;padding:8px;background:#1a2b4a;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center}
   .contact-btn:hover{background:#243d65}
   .legend{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.96);border:1px solid #e5e5e3;border-radius:8px;padding:8px 14px;display:flex;gap:14px;flex-wrap:wrap;z-index:999;font-size:12px}
@@ -233,6 +235,7 @@ function renderAll(){
           <div class="detail-item"><label>Project Type</label><span>${p.type||'—'}</span></div>
           <div class="detail-item"><label>May Be Listed?</label><span>${p.may_be_listed||'—'}</span></div>
         </div>
+        ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Project Record']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}
         <a class="contact-btn" href="mailto:${CONTACT_EMAIL}?subject=Inquiry: ${encodeURIComponent(p.address||'New Project')}">Contact Agent</a>
       </div>
     </div>
