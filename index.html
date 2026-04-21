@@ -241,6 +241,7 @@ document.getElementById('search').value.toLowerCase();
       (p.address||'').toLowerCase().includes(search) ||
       (p.neighborhood||'').toLowerCase().includes(search) ||
       (p.city||'').toLowerCase().includes(search);
+    if(search) console.log(p.address, '|', (p.address||'').toLowerCase(), '| match:', matchSearch);
     const matchStatus = !filterStatus || p.status===filterStatus;
     const matchType = !filterType || p.type===filterType;
     return matchSearch && matchStatus && matchType;
