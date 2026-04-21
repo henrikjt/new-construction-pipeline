@@ -17,17 +17,19 @@
   .toolbar input:focus{border-color:#1a2b4a}
   select{padding:6px 10px;border:1px solid #d0d0cc;border-radius:6px;font-size:13px;background:#fff;outline:none;cursor:pointer}
   select:focus{border-color:#1a2b4a}
-  .main{display:flex;height:calc(100vh - 102px)}
+  .main{display:flex;height:calc(100vh - 102px);position:relative}
   #map{flex:1;min-width:0;z-index:0}
   .sidebar{width:340px;overflow-y:auto;background:#f5f5f3;border-left:1px solid #e5e5e3}
+  .legend{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.96);border:1px solid #e5e5e3;border-radius:8px;padding:8px 14px;display:flex;gap:14px;flex-wrap:wrap;z-index:999;font-size:12px;pointer-events:none;max-width:90%}
   @media(max-width:640px){
-    .main{flex-direction:column;height:auto}
-    #map{height:40vh;width:100%}
+    header h1{font-size:15px}
+    .main{flex-direction:column;height:auto;position:static}
+    #map{height:45vh;min-height:200px;width:100%;display:block}
+    .legend{position:relative;bottom:auto;left:auto;transform:none;margin:8px;width:calc(100% - 16px);max-width:none;justify-content:center;font-size:11px;gap:8px;pointer-events:auto}
     .sidebar{width:100%;border-left:none;border-top:1px solid #e5e5e3;overflow-y:visible}
     .toolbar{flex-direction:column;align-items:stretch}
     .toolbar input[type=text]{width:100%}
     select{width:100%}
-    .legend{position:relative;bottom:auto;left:auto;transform:none;margin:10px auto;justify-content:center;font-size:11px;gap:8px;flex-wrap:wrap}
     .card{margin:8px}
   }
   .sidebar-header{padding:12px 14px 8px;font-size:12px;color:#666;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e5e5e3;background:#fff}
@@ -54,9 +56,6 @@
   .detail-item span{font-size:13px;color:#1a1a1a;font-weight:500}
   .doc-btn{display:inline-block;margin:0 6px 6px 0;padding:6px 12px;background:#f0f4ff;color:#1a2b4a;border:1px solid #c5d0e8;border-radius:6px;font-size:12px;text-decoration:none}
   .doc-btn:hover{background:#e0e8ff}
-  .contact-btn{display:block;width:100%;padding:8px;background:#1a2b4a;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center}
-  .contact-btn:hover{background:#243d65}
-  .legend{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.96);border:1px solid #e5e5e3;border-radius:8px;padding:8px 14px;display:flex;gap:14px;flex-wrap:wrap;z-index:999;font-size:12px;pointer-events:none}
   .legend-item{display:flex;align-items:center;gap:5px}
   .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
   .no-results{padding:24px;text-align:center;color:#888;font-size:13px}
@@ -100,7 +99,6 @@
   </div>
 </div>
 
-
 <div class="legend">
   <div class="legend-item"><span class="dot" style="background:#3b82f6"></span>Permit Filed</div>
   <div class="legend-item"><span class="dot" style="background:#f59e0b"></span>Under Review</div>
@@ -110,12 +108,7 @@
 </div>
 
 <script>
-// ============================================================
-// CONFIGURATION — update these two values
-// ============================================================
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_IkoOesMqd_-ELyEyxxk_3DJbHyKggDUSmnGVw3-zjCPUNzUCum00ZjykjfIXJulDT5nlTrdHTKPl/pub?gid=0&single=true&output=csv';
-const CONTACT_EMAIL = 'your@email.com'; // agent contact email
-// ============================================================
 
 const STATUS_COLORS = {
   'Permit Filed':'#3b82f6',
@@ -138,7 +131,7 @@ let activeId = null;
 let map;
 
 function initMap(){
-  map = L.map('map').setView([37.5741, -122.3588], 12); // Burlingame
+  map = L.map('map').setView([37.5741, -122.3588], 12);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
     attribution:'© OpenStreetMap contributors © CARTO', maxZoom:19
   }).addTo(map);
