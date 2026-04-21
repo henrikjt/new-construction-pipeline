@@ -235,7 +235,6 @@ function renderAll(){
           <div class="detail-item"><label>May Be Listed?</label><span>${p.may_be_listed||'—'}</span></div>
         </div>
         ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Project Record']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}
-        <a class="contact-btn" href="mailto:${CONTACT_EMAIL}?subject=Inquiry: ${encodeURIComponent(p.address||'New Project')}">Contact Agent</a>
       </div>
     </div>
   `).join('');
