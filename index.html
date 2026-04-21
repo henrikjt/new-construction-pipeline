@@ -54,7 +54,10 @@
   .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-bottom:10px}
   .detail-item label{font-size:11px;color:#888;display:block}
   .detail-item span{font-size:13px;color:#1a1a1a;font-weight:500}
-  .project-img{width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:10px;background:#f0f0ee;display:block}
+  .project-img{width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:10px;background:#f0f0ee;display:block;cursor:zoom-in}
+  .lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:90%;max-height:90vh;border-radius:8px}
   .project-img-placeholder{width:100%;height:180px;border-radius:6px;margin-bottom:10px;background:#f0f0ee;display:flex;align-items:center;justify-content:center;font-size:12px;color:#aaa}
   .doc-btn{display:inline-block;margin:0 6px 6px 0;padding:6px 12px;background:#f0f4ff;color:#1a2b4a;border:1px solid #c5d0e8;border-radius:6px;font-size:12px;text-decoration:none}
   .doc-btn:hover{background:#e0e8ff}
@@ -119,6 +122,10 @@
   Project information is sourced from publicly available planning and permitting records, including City of Burlingame Planning Commission materials and other Peninsula city planning departments.
   Always verify details directly with the relevant city planning department before making any decisions.
 </footer>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightbox-img" src="" alt=""/>
+</div>
 
 <script>
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_IkoOesMqd_-ELyEyxxk_3DJbHyKggDUSmnGVw3-zjCPUNzUCum00ZjykjfIXJulDT5nlTrdHTKPl/pub?gid=0&single=true&output=csv';
@@ -198,7 +205,27 @@ async function loadData(){
 }
 
 function renderAll(){
-  const search = document.getElementById('search').value.toLowerCase();
+  const search = document.addEventListener('click',e=>{
+  if(e.target.classList.contains('project-img')){
+    e.stopPropagation();
+    const lb=document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src=e.target.src.replace('w800','w1600');
+    lb.style.display='flex';
+  }
+  if(e.target.id==='lightbox'||e.target.id==='lightbox-img'){
+    const lb=document.getElementById('lightbox');
+    lb.style.display='none';
+    document.getElementById('lightbox-img').src='';
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.getElementById('lightbox').style.display='none';
+    document.getElementById('lightbox-img').src='';
+  }
+});
+
+document.getElementById('search').value.toLowerCase();
   const filterStatus = document.getElementById('filter-status').value;
   const filterType = document.getElementById('filter-type').value;
 
