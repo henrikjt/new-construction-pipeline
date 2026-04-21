@@ -215,6 +215,12 @@ function closeLightbox(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
 
+document.addEventListener('click',e=>{
+  if(e.target.dataset.lightbox){
+    e.stopPropagation();
+    openLightbox(e.target.src);
+  }
+});
 document.getElementById('search').value.toLowerCase();
   const filterStatus = document.getElementById('filter-status').value;
   const filterType = document.getElementById('filter-type').value;
@@ -259,7 +265,7 @@ document.getElementById('search').value.toLowerCase();
         </div>
       </div>
       <div class="detail-panel${activeId===p.id?' open':''}">
-        ${p.image ? `<img class="project-img" src="${p.image}" alt="${p.address}" loading="lazy" onerror="this.style.display='none'" onclick="event.stopPropagation();openLightbox(this.src)"/>` : ''}
+        ${p.image ? `<img class="project-img" src="${p.image}" alt="Project photo" loading="lazy" onerror="this.style.display='none'" data-lightbox="true"/>` : ''}
         <h3>${p.address||'—'}</h3>
         <p>${p.description||'No description provided.'}</p>
         <div class="detail-grid">
