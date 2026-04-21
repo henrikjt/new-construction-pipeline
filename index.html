@@ -146,9 +146,7 @@ function initMap(){
 }
 
 function loadCityBoundaries(){
-  // US Census Bureau TIGERweb API — San Mateo County (FIPS 081) incorporated places
-  const url = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4/query?where=COUNTY%3D%27081%27+AND+STATE%3D%2706%27&outFields=NAME&f=geojson&outSR=4326';
-  fetch(url)
+  fetch('./cities.geojson')
     .then(r=>r.json())
     .then(data=>{
       L.geoJSON(data,{
