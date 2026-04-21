@@ -86,7 +86,6 @@
     <option value="Under Review">Under Review</option>
     <option value="Approved">Approved</option>
     <option value="Construction Started">Construction Started</option>
-    <option value="May Be Listed">May Be Listed</option>
   </select>
   <select id="filter-type">
     <option value="">All types</option>
@@ -111,7 +110,6 @@
   <div class="legend-item"><span class="dot" style="background:#f59e0b"></span>Under Review</div>
   <div class="legend-item"><span class="dot" style="background:#10b981"></span>Approved</div>
   <div class="legend-item"><span class="dot" style="background:#ec4899"></span>Construction Started</div>
-  <div class="legend-item"><span class="dot" style="background:#8b5cf6"></span>May Be Listed</div>
 </div>
 
 <footer>
@@ -128,14 +126,12 @@ const STATUS_COLORS = {
   'Under Review':'#f59e0b',
   'Approved':'#10b981',
   'Construction Started':'#ec4899',
-  'May Be Listed':'#8b5cf6'
 };
 const BADGE_CLASSES = {
   'Permit Filed':'badge-permit',
   'Under Review':'badge-review',
   'Approved':'badge-approved',
   'Construction Started':'badge-construction',
-  'May Be Listed':'badge-listed'
 };
 
 let allProjects = [];
