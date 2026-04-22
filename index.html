@@ -300,10 +300,11 @@ function selectProject(id){
     const isMobile = window.innerWidth <= 640;
     if(isMobile){
       const mapH = document.getElementById('map').offsetHeight;
+      const toolbarH = document.querySelector('.toolbar').offsetHeight;
       const el = document.getElementById(`card-${id}`);
       if(el){
         setTimeout(()=>{
-          const top = el.getBoundingClientRect().top + window.scrollY - mapH;
+          const top = el.getBoundingClientRect().top + window.scrollY - mapH - toolbarH;
           window.scrollTo({top, behavior:'smooth'});
         },100);
       }
