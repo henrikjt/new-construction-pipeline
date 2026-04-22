@@ -278,7 +278,6 @@ const matchStatus = !filterStatus || p.status===filterStatus;
       </div>
       <div class="detail-panel${activeId===p.id?' open':''}">
         ${p.image ? `<img class="project-img" src="${p.image}" alt="Project photo" loading="lazy" onerror="this.style.display='none'"/>` : ''}
-        <h3>${p.address||'—'}</h3>
         <p>${p.description||'No description provided.'}</p>
         <div class="detail-grid">
           <div class="detail-item"><label>Est. Completion</label><span>${p.est_completion||'—'}</span></div>
