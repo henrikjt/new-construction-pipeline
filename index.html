@@ -211,8 +211,7 @@ async function loadData(){
   }
 }
 
-function renderAll(){
-  const search = document.addEventListener('click',e=>{
+document.addEventListener('click',e=>{
   if(e.target.classList.contains('project-img')){
     e.stopPropagation();
     const lb=document.getElementById('lightbox');
@@ -232,7 +231,8 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-document.getElementById('search').value.toLowerCase();
+function renderAll(){
+  const search = document.getElementById('search').value.toLowerCase();
   const filterStatus = document.getElementById('filter-status').value;
   const filterType = document.getElementById('filter-type').value;
 
@@ -241,8 +241,7 @@ document.getElementById('search').value.toLowerCase();
       (p.address||'').toLowerCase().includes(search) ||
       (p.neighborhood||'').toLowerCase().includes(search) ||
       (p.city||'').toLowerCase().includes(search);
-    if(search) console.log(p.address, '|', (p.address||'').toLowerCase(), '| match:', matchSearch);
-    const matchStatus = !filterStatus || p.status===filterStatus;
+const matchStatus = !filterStatus || p.status===filterStatus;
     const matchType = !filterType || p.type===filterType;
     return matchSearch && matchStatus && matchType;
   });
