@@ -316,10 +316,7 @@ function selectProject(id){
   }
 }
 
-document.getElementById('search').addEventListener('input',()=>{
-  console.log('search:', document.getElementById('search').value, 'projects:', allProjects.length);
-  renderAll();
-});
+document.getElementById('search').addEventListener('input',renderAll);
 document.getElementById('filter-status').addEventListener('change',renderAll);
 document.getElementById('filter-type').addEventListener('change',renderAll);
 
