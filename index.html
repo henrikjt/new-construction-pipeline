@@ -24,7 +24,7 @@
   .toolbar input:focus{border-color:#1a2b4a}
   select{padding:6px 10px;border:1px solid #d0d0cc;border-radius:6px;font-size:13px;background:#fff;outline:none;cursor:pointer}
   select:focus{border-color:#1a2b4a}
-  .main{display:flex;height:calc(100vh - 102px);position:relative}
+  .main{display:flex;position:relative}
   #map{flex:1;min-width:0;z-index:0}
   .sidebar{width:340px;overflow-y:auto;background:#f5f5f3;border-left:1px solid #e5e5e3}
   .legend{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.96);border:1px solid #e5e5e3;border-radius:8px;padding:8px 14px;display:flex;gap:14px;flex-wrap:wrap;z-index:999;font-size:12px;pointer-events:none;max-width:90%}
@@ -40,6 +40,10 @@
     .card{margin:8px}
     .sidebar-header{display:none}
     .card-address{font-size:16px}
+  }
+  @media(min-width:641px){
+    body{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+    .main{flex:1;min-height:0}
   }
   .sidebar-header{padding:12px 14px 8px;font-size:12px;color:#666;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e5e5e3;background:#fff}
   .card{background:#fff;margin:10px;border-radius:8px;border:1px solid #e5e5e3;overflow:hidden;cursor:pointer;transition:box-shadow 0.15s}
