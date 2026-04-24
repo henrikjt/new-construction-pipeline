@@ -285,7 +285,7 @@ const matchStatus = !filterStatus || p.status===filterStatus;
           <div class="detail-item"><label>Project Type</label><span>${p.type||'—'}</span></div>
 
         </div>
-        ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Official Source']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}
+        ${[['renderings','Renderings'],['proposed_plans','Proposed Plans'],['project_record','Official Source']].filter(([k])=>p[k]).map(([k,label])=>`<a class="doc-btn" href="${p[k]}" target="_blank" rel="noopener">${label}</a>`).join('')}${(()=>{const parts=(p.extra_links||'').split('|').map(s=>s.trim()).filter(Boolean);const btns=[];for(let i=0;i+1<parts.length;i+=2){const url=parts[i+1];if(/^https?:\/\//i.test(url))btns.push(`<a class="doc-btn" href="${url}" target="_blank" rel="noopener">${parts[i]}</a>`);}return btns.join('');})()}
       </div>
     </div>
   `).join('');
